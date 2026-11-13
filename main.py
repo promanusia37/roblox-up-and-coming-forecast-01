@@ -49,7 +49,9 @@ def load_reads():
             if not line:
                 continue
             snap = json.loads(line)
-            rows = [g for g in snap.get("up_and_coming") or [] if g.get("ok", True)]
+            if snap.get("ok") is False:
+                continue  # a failed read carries no chart
+            rows = list(snap.get("up_and_coming") or [])
             rows.sort(key=lambda g: g["rank"])
             reads.append({
                 "at": parse_time(snap["at"]),
